@@ -2,10 +2,12 @@ package prob01;
 
 public class Member {
 	
+	//필드 설정
 	private String id;
 	private String name;
 	private int point;
 	
+	//getter , setter 함수
 	public String getId() {
 		return id;
 	}

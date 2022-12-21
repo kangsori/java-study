@@ -11,15 +11,24 @@ public class TV {
 	}
 	
 	//값 셋팅하는 생성자 추가
-	public TV(int i, int j, boolean b) {
+	public TV(int channel, int volume, boolean power) {
 		this.channel=channel;
 		this.volume=volume;
 		this.power=power;
+		power(power);
+		
 	}
 
-	
 	public void power(boolean on) {
-		this.power=on;
+		if(!on) {
+			this.channel=0;
+			this.volume=0;
+		}else {
+			if(channel==0) {
+				this.channel=1;
+			}
+		}
+		this.power=on;	
 	}
 	
 	public void channel(int channel) {
@@ -54,7 +63,7 @@ public class TV {
 	public void ckChannel(int number) {
 		if(number<1) {
 			this.channel=255 ;
-		}else if(number>255){
+		}else if(number>255 || number==0){
 			this.channel=1 ;
 		}
 	}

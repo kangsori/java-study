@@ -12,6 +12,7 @@ public class Account {
 		System.out.println(this.accountNo+" 계좌가 개설되었습니다.");
 	}
 
+	//getter ,setter 함수
 	public String getAccountNo() {
 		return accountNo;
 	}
@@ -43,8 +44,5 @@ public class Account {
 		
 	}
 	
-	
 
-	
-	
 }
