@@ -18,6 +18,16 @@ public class Goods {
 		countOfGoods = countOfGoods + 1 ;
 	}
 	
+	//생성자 오버로딩
+	public Goods(String name,int price,int countStock, int countSold) {
+		this.name= name;
+		this.price=price;
+		this.countStock=countStock;
+		this.countSold=countSold;
+		
+		countOfGoods = countOfGoods + 1 ;
+	}
+	
 	public int calDiscountPrice(float discountRate) {
 		return (int)(price*discountRate);
 	}
