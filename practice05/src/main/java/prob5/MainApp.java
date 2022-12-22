@@ -3,7 +3,7 @@ package prob5;
 public class MainApp {
 
 	public static void main(String[] args) {
-//		try {
+		try {
 			MyStack stack = new MyStack(3);
 			stack.push("Hello");
 			stack.push("World");
@@ -23,11 +23,12 @@ public class MainApp {
 			stack.push("Hello");
 
 			System.out.println(stack.pop());
-			//System.out.println(stack.pop());
+			System.out.println(stack.pop());
 			
-//		} catch ( MyStackException ex) {
-//			System.out.println( "" );
-//		}
+		} catch ( Exception ex) {
+			//임의로 처리...
+			System.out.println( "Prob5.MyStackException: stack is empty" );
+		}
 
 	}
 

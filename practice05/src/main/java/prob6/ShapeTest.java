@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShapeTest {
-	
-	//Math.sqrt(w*w+h*h) 참고 --둘레구하기
 
 	public static void main(String[] args) {
 		Shape[] list = new Shape[2];

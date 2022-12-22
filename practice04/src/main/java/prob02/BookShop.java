@@ -35,6 +35,7 @@ public class BookShop {
 		
 	}
 	
+	//책번호가 입력값과 같은것을 찾아서 rent하는 메소드
 	private static void rentBook(Book[] books,int num) {
 		for(Book i:books) {
 			if(i.getBookNo()==num) {
@@ -43,6 +44,7 @@ public class BookShop {
 		}
 	}
 
+	//책정보를 출력하는 메소드
 	private static void displayBookInfo(Book[] books) {
 		for(Book i:books) {
 			i.print();
