@@ -1,4 +1,6 @@
-package paint;
+package com.douzone.paint.shape;
+
+import com.douzone.paint.i.Drawable;
 
 //추상 클래스
 public abstract class Shape implements Drawable{
