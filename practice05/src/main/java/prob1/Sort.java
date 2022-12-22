@@ -10,14 +10,22 @@ public class Sort {
 		System.out.println( "Before sort." );
 		
 		for (int i = 0; i < count; i++) {
-			System.out.print( array[ i ] + " " );
+			System.out.print(array[i] + " ");
 		}
 		
-		//
 		// 정렬 알고리즘이 적용된 코드를 여기에 작성합니다.
-		//
-
-		
+		// 길이가 7인 배열이기때문에 6번 돌린다
+		for(int i=1 ;i<count; i++) {
+			// 돌릴때마다 하나씩 줄어드는 이중for문으로 옆자리 값과 비교하여 변경
+			for(int j=0 ;j<count-i;j++) {
+				if(array[j] < array[j+1]) {
+					int temp =array[j];
+					array[j]=array[j+1];
+					array[j+1]=temp;
+				}
+			}
+		}
+	
 		// 결과 출력
 		System.out.println( "\nAfter Sort." );
 		
