@@ -24,7 +24,7 @@ public class MainApp {
 
 			System.out.println(stack.pop());
 			System.out.println(stack.pop());
-			
+		   
 		} catch ( Exception ex) {
 			//임의로 처리...
 			System.out.println( "Prob5.MyStackException: stack is empty" );

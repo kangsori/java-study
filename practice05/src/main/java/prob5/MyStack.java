@@ -8,7 +8,6 @@ public class MyStack {
 	//buffer배열의 길이를 설정하는 생성자
 	public MyStack(int num) {
 		buffer=new String[num];
-		index = 0;
 	}
 
 	//현재 index에 데이터를 넣고 인덱스 증가하는 push 메소드
