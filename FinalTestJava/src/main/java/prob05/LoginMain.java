@@ -35,13 +35,21 @@ public class LoginMain {
 		}
 	}
 	
-	public static void login(List<User> users, User user ) throws PasswordDismatchException{
+	public static void login(List<User> users, User user ) throws PasswordDismatchException,UserNotFoundException{
 		/* 코드 작성 */
+		
+		// 사용자 확인
+		if(!users.contains(user)) {
+			throw new UserNotFoundException();
+		}
+		
+		// 사용자가 있으면서 비밀번호 확인
 		for(User i : users) {
-			// 비밀번호가 틀릴경우
-			if(i.getId()==user.getId() && i.getPassword() != user.getPassword()) {
+			System.out.println(i.equals(user)+"/"+i.getId());
+			if(i.equals(user) && (!i.getPassword().equals(user.getPassword()))) {
 				throw new PasswordDismatchException();
 			}
 		}
+	
 	}
 }
