@@ -35,7 +35,13 @@ public class LoginMain {
 		}
 	}
 	
-	public static void login(List<User> users, User user ){
+	public static void login(List<User> users, User user ) throws PasswordDismatchException{
 		/* 코드 작성 */
+		for(User i : users) {
+			// 비밀번호가 틀릴경우
+			if(i.getId()==user.getId() && i.getPassword() != user.getPassword()) {
+				throw new PasswordDismatchException();
+			}
+		}
 	}
 }

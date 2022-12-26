@@ -15,4 +15,6 @@ public class MoneyTest {
 			System.out.println("Money Class 구현을 완료 하였습니다.");
 		}
 	}
+	
+	
 }
