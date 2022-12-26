@@ -48,9 +48,8 @@ public class Money {
 
 	@Override
 	public boolean equals(Object obj) {	
-		// object의 타입만 확인하기 위해 객체 자체는 다른지 비교하지 않음
-		//if (this == obj)
-		//	return true;
+		if (this == obj)
+			return true;
 		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
