@@ -11,7 +11,7 @@ public class StackTest {
 		s.push("마이콜");
 		s.push("도우너");
 		
-		while(!s.isEmpty()) {
+		while(!s.empty()) {
 			String str = s.pop();
 			System.out.println(str);
 		}
