@@ -42,8 +42,7 @@ public class EchoClient {
 				}
 				System.out.println("<"+data);
 			}
-			
-			
+
 		}catch(SocketException ex) {
 			System.out.println("[client] suddenly closed by server");
 		} catch (IOException e) {
