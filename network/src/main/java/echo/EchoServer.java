@@ -31,8 +31,8 @@ public class EchoServer {
 			
 			try {
 
-				PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()),true);
-				BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(),"utf-8"),true);
+				BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(),"utf-8"));
 			
 				while(true) {
 					String data = br.readLine();
