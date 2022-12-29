@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.file.Files;
@@ -49,18 +50,17 @@ public class RequestHandler extends Thread {
 				}
 			}
 			//요청 처리
-			//consoleLog(request);
+			consoleLog(request);
 			
 			String[] tokens = request.split(" ");
 			
 			if("GET".equals(tokens[0])) {
-				consoleLog(request);
 				responseStaticResource(outputStream, tokens[1], tokens[2]);
 			}else {
 				// methods: POST, PUT, DELETE, HEAD, CONNECT
 				// SimpleHttpServer 에서는 무시(400 Bad Request)
 				// 과제
-				// reponse400Error(outputStream,tokens[2]);
+				reponse400Error(outputStream,tokens[2]);
 			}
 				
 			// 예제 응답입니다.
@@ -92,20 +92,68 @@ public class RequestHandler extends Thread {
 		}
 		
 		File file = new File(DOCUMENT_ROOT+url);
+		if(!file.exists()) {
+			reponse404Error(outputStream, protocol);
+			return;
+		}
 		
 		// nio
 		byte[] body =Files.readAllBytes(file.toPath());
 		String contentType = Files.probeContentType(file.toPath());
 		
 		// 응답
-		outputStream.write("HTTP/1.1 200 OK\r\n".getBytes("UTF-8"));
+		outputStream.write((protocol + " 200 OK\r\n").getBytes("UTF-8"));
 		outputStream.write(("Content-Type:"+contentType+"; charset=utf-8\r\n").getBytes("UTF-8"));
 		outputStream.write("\r\n".getBytes());
 		outputStream.write(body);
 		 
 	}
+	
+	private void reponse400Error(OutputStream outputStream, String protocol) {
+		try {
+			outputStream.write((protocol + " 400 Bad Request\r\n").getBytes("UTF-8"));
+			outputStream.write(("Content-Type:text/html; charset=utf-8\r\n").getBytes("UTF-8"));
+			outputStream.write("\r\n".getBytes());
+			outputStream.write(errorFrame("400 Error (Bad Request) : GET이외에 요청은 무시합니다").getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void reponse404Error(OutputStream outputStream, String protocol) {
+		// HTTP/1.1 404 Not Found
+		// Content-Type:....
+		// \r\n
+		// ...
+		try {
+			outputStream.write((protocol + " 404 Not Found\r\n").getBytes("UTF-8"));
+			outputStream.write(("Content-Type:text/html; charset=utf-8\r\n").getBytes("UTF-8"));
+			outputStream.write("\r\n".getBytes());
+			outputStream.write(errorFrame("404 Error (Not Found) : 페이지를 찾을 수 없습니다").getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	public void consoleLog( String message ) {
 		System.out.println( "[httpd#" + getId() + "] " + message );
+	}
+	
+	public String errorFrame(String error) {
+		return "<link href=\"/assets/css/mysite.css\" rel=\"stylesheet\" type=\"text/css\"><body>"
+				+ "	<div id=\"container\">"
+				+ "		<div id=\"header\">"
+				+ "			<h1>"+error+"</h1>"
+				+ "     </div>"
+				+ " </div>"
+				+ "</body>" ;
 	}
 }
