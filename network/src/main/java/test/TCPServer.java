@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class TCPServer {
 
@@ -18,7 +19,7 @@ public class TCPServer {
 			//2. 바인딩(binding)
 			//	 Socket에 InetSocketaddress(IPAddress + Port)를 바인딩 한다.
 			//	 IPAddress : 0.0.0.0 : 특정 호스트 IP에 바인딩 하지 않는다.
-			serversocket.bind(new InetSocketAddress("0.0.0.0",5000));
+			serversocket.bind(new InetSocketAddress("0.0.0.0",5000),10);
 			
 			//3. accept
 			Socket socket =serversocket.accept();  //blocking
@@ -49,9 +50,10 @@ public class TCPServer {
 					os.write(data.getBytes("utf-8"));
 				}
 				
+			}catch(SocketException ex) {
+				System.out.println("[server] suddenly closed by client");
 			}catch(IOException ex) {
 				System.out.println("[server] error :"+ex);
-			
 			}finally {
 				try {
 					if(socket != null && !socket.isClosed()) {

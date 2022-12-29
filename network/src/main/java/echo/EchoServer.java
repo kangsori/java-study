@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class EchoServer {
 	public static final int PORT=8000;
@@ -44,6 +45,8 @@ public class EchoServer {
 					log("receved:"+data);
 					pw.println(data);
 				}
+			}catch(SocketException ex) {
+				System.out.println("[server] suddenly closed by client");
 			}catch(IOException ex) {
 				log("error : "+ex);
 			
@@ -57,7 +60,7 @@ public class EchoServer {
 				}
 			}
 			
-		} catch (IOException e) {
+		}catch (IOException e) {
 			log("error : "+e);
 		}finally {
 			try {
