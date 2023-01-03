@@ -4,13 +4,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
+import java.nio.channels.ClosedByInterruptException;
+import java.util.Base64;
 
 public class ChatClientThread extends Thread {
-	Socket socket = null;
-	BufferedReader br = null;
+	private BufferedReader br ;
 	
-	public ChatClientThread(Socket socket,BufferedReader br) {
-		this.socket=socket;
+
+	public ChatClientThread(BufferedReader br) {
 		this.br = br;
 	}
 
@@ -18,22 +19,35 @@ public class ChatClientThread extends Thread {
 	public void run() {
 		try {
 			while(true) {
+				// 받은 메세지 출력
 				String response = br.readLine();
-				System.out.println(response);
+				
+				String[] tokens = response.split(" ");
+				
+				if("stop".equals(tokens[0])) {
+					break;
+				}else if ("System".equals(tokens[0])){
+					System.out.println(ChatClient.decodeToString(tokens[1]));
+				}else {
+					System.out.println(">>"+tokens[0]+":"+ChatClient.decodeToString(tokens[1]));
+				}
 			}
-		} catch(SocketException ex) {
-			//정상 종료하는데 여기로 들어온다...
-			//System.out.println("[client] suddenly closed by server");
+			
+		}catch(SocketException e) {
+			ChatClient.log("suddenly closed by server");
 		}catch(IOException e) {
-			ChatServer.log("error ["+e+"]");
+			ChatClient.log("error - "+e);
 		}finally {
 			try {
-				if(socket != null && !socket.isClosed())
-				socket.close();
+				//자원정리
+				if(br != null) {
+					br.close();
+				}
 			} catch (IOException e) {
-				ChatServer.log("error ["+e+"]");
+				ChatClient.log("error - "+e);
 			}
 		}
-	}
-
+	
+	}	
+	
 }

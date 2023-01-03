@@ -21,27 +21,32 @@ public class ChatServer {
 			
 			// 바인딩
 			serverSocket.bind( new InetSocketAddress( "0.0.0.0", PORT ) );
+			log("Starts...");
 			
 			// 요청대기
 			while(true) {
+				
 				Socket socket = serverSocket.accept();
 				
 				new ChatServerThread(socket, listWriters).start();
 			}
-		} catch (IOException e) {
-			ChatServer.log("error ["+e+"]");
+			
+		}catch (IOException e) {
+			log("error - "+e);
 		}finally {
 			try {
+				// 자원정리
 				if(serverSocket != null && !serverSocket.isClosed()) {
 					serverSocket.close();
 				}
 			} catch (IOException e) {
-				ChatServer.log("error ["+e+"]");
+				log("error - "+e);
 			}
 		}
 					
 	}
 	
+	//서버로그 출력
 	public static void log(String message) {
 		System.out.println("[ChatServer : "+ message + "]");
 	}

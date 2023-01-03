@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Scanner;
 
@@ -36,39 +37,63 @@ public class ChatClient {
 			// join 프로토콜
 			System.out.print("닉네임>>");
 			String nickname = scanner.nextLine();
-			pw.println("join:"+nickname);
+			pw.println("join "+nickname);
 			
-			//ChatClinet
-			new ChatClientThread(socket,br).start();
-			
+			//ChatClient
+			new ChatClientThread(br).start();
+
 			//키보드 입력 처리
 			while(true) {
 				String input = scanner.nextLine();
 				
-				if("quit".equals(input)) {
-					pw.println("quit:");
-					break;
-				}else {
-					//input=Base64.getEncoder().encodeToString(input.getBytes());
-					pw.println("message:"+input);
+				//입력값이 없을때 처리
+				if(input=="") {
+					System.out.print("[내용을 입력해 주세요]");
+					continue;
 				}
+				
+				if("quit".equals(input)) {
+					pw.println(input);
+					break;
+				}else{
+					pw.println("message "+encodeToString(input));
+				}
+					
 			}
-		} catch(SocketException ex) {
-			System.out.println("[client] suddenly closed by server");
-		}catch (IOException e) {
-			ChatServer.log("error ["+e+"]");
+			
+		} catch (IOException e) {
+			log("error - "+e);
 		} finally {
 			try {
-				if(scanner != null) {
-					scanner.close();
-				}
+				//자원정리
 				if(socket != null && !socket.isClosed()) {
 					socket.close();
 				}
-			
+				
+				if(scanner != null) {
+					scanner.close();
+				}
+				
 			} catch (IOException e) {
-				ChatServer.log("error ["+e+"]");
+				log("error - "+e);
 			}
 		}
+	}
+	
+	//클라이언트 로그 출력
+	public static void log(String message) {
+		System.out.println("[ChatClient : "+ message + "]");
+	}
+	
+	//인코딩 메서드
+	public static String encodeToString(String str) {
+		return new String(Base64.getEncoder().encode(str.getBytes(StandardCharsets.UTF_8)));
+		 
+	}
+	
+	//디코딩 메서드
+	public static String decodeToString(String str) {
+		return new String(Base64.getDecoder().decode(str),StandardCharsets.UTF_8);
+		 
 	}
 }

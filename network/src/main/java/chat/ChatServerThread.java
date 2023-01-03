@@ -25,7 +25,7 @@ public class ChatServerThread extends Thread {
 	@Override
 	public void run() {
 		
-		// Remote Host Information
+		// 호스트 접속 정보 출력
 		InetSocketAddress inetRemoteSocketAddress =(InetSocketAddress)socket.getRemoteSocketAddress();
 		String remoteHostAddress = inetRemoteSocketAddress.getAddress().getHostAddress();
 		int remoteport = inetRemoteSocketAddress.getPort();
@@ -40,56 +40,62 @@ public class ChatServerThread extends Thread {
 			// 요청 처리
 			while(true) {
 				String request = br.readLine();
-				if(request == null) {
-					ChatServer.log("클라이언트로 부터 연결 끊김");
-					doQuit(pw);
-					break;
-				}
-				
+			
 				// 프로토콜 분석
-				String[] tokens = request.split(":");
+				String[] tokens = request.split(" ");
+				
 				if("join".equals(tokens[0])) {
-					//new String(Base64.getDecoder().decode(tokens[1]))
 					doJoin(tokens[1],pw);
 				}else if("message".equals(tokens[0])) {
 					doMessage(tokens[1]);
-				}else if("quit".equals(tokens[0])) {
+				}else if("quit".equals(tokens[0]) || request == null) {
+					ChatServer.log("disconnected by client["+remoteHostAddress+":"+remoteport+"]");
 					doQuit(pw);
 					break;
 				}else {
 					ChatServer.log("에러 : 알 수 없는 요청 ("+tokens[0]+")");
 				}
 			}
-		} catch (SocketException e) {
-			System.out.println("[server] suddenly closed by client");
+			
+		}catch (SocketException e) {
+			ChatServer.log("suddenly closed by client");
 		} catch (IOException e) {
-			ChatServer.log("error ["+e+"]");
+			ChatServer.log("error - "+e);
 		} finally {
 			try {
+				//자원정리
 				if(socket != null && !socket.isClosed()) {
 					socket.close();
 				}
 			} catch (IOException e) {
-				ChatServer.log("error ["+e+"]");
+				ChatServer.log("error - "+e);
 			}
 		}
 		
 	}
 	
+	//join 프로토콜 실행 메서드
 	private void doJoin(String nickname, PrintWriter writer) {
+		// nickname 저장
 		this.nickname=nickname;
 		
+		//writer풀에 저장
 		addWriter(writer);
-	
-		broadcast(nickname+"님이 입장하셨습니다.");
+		
+		//메세지 출력
+		String encodeingstr=ChatClient.encodeToString(nickname+"님이 입장하셨습니다.");
+		broadcast("System "+encodeingstr);
+		
 	}
 	
+	//writer풀 저장 수행 메서드
 	private void addWriter(Writer writer) {
 		synchronized (listWriters) {
 			listWriters.add(writer);
 		}
 	}
 	
+	//writer풀을 이용한 메세지 전달을 수행하는 메서드
 	private void broadcast(String data) {
 		synchronized (listWriters) {
 			for(Writer writer:listWriters) {
@@ -99,24 +105,34 @@ public class ChatServerThread extends Thread {
 		}
 	}
 	
+	//메세지값 전달
 	private void doMessage(String message) {
-		broadcast(nickname+":"+message);
+		broadcast(nickname+" "+message);
+		
 	}
 	
+	//소켓 종료 메서드
 	private void doQuit(Writer writer) {
+		//writer풀에 삭제
 		removeWriter(writer);
 		
-		String data = nickname + "님이 퇴장 하셨습니다.";
+		//종료 신호 보내기
+		PrintWriter printWriter = (PrintWriter)writer;
+		printWriter.println("stop ");
 		
-		broadcast(data);
+		String encodeingstr=ChatClient.encodeToString(nickname+"님이 퇴장하셨습니다.");
+		broadcast("System "+encodeingstr);
 	}
 	
+	//writer풀 삭제 수행 메서드
 	private void removeWriter(Writer writer) {
 		synchronized (listWriters) {
 			listWriters.remove(writer);
 		}
 		
 	}
+	
+	
 
 	
 	
