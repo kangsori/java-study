@@ -23,9 +23,11 @@ public class ChatWindow extends ChatClientThread {
 	private String name;
 	private Frame frame;
 	private Panel pannel;
+	private Panel pannel2;
 	private Button buttonSend;
 	private TextField textField;
 	private TextArea textArea;
+	private TextArea textAreaUser;
 	private PrintWriter pw = null;
 	
 	public ChatWindow(String name,PrintWriter pw,BufferedReader br) {
@@ -33,9 +35,11 @@ public class ChatWindow extends ChatClientThread {
 		this.name=name;
 		frame = new Frame(name);
 		pannel = new Panel();
+		pannel2 = new Panel();
 		buttonSend = new Button("Send");
 		textField = new TextField();
 		textArea = new TextArea(30, 80);
+		textAreaUser = new TextArea(30, 20);
 		this.pw=pw;
 	}
 
@@ -56,7 +60,7 @@ public class ChatWindow extends ChatClientThread {
 		});
 
 		// Textfield
-		textField.setColumns(80);
+		textField.setColumns(100);
 		
 		//엔터이벤트 실행
 		textField.addKeyListener(new KeyAdapter() {
@@ -74,10 +78,13 @@ public class ChatWindow extends ChatClientThread {
 		pannel.add(textField);
 		pannel.add(buttonSend);
 		frame.add(BorderLayout.SOUTH, pannel);
+		frame.add(BorderLayout.EAST, pannel2);
 
 		// TextArea
 		textArea.setEditable(false);
+		textAreaUser.setEditable(false);
 		frame.add(BorderLayout.CENTER, textArea);
+		frame.add(BorderLayout.EAST, textAreaUser);
 
 		// Frame
 		frame.addWindowListener(new WindowAdapter() {
@@ -91,10 +98,10 @@ public class ChatWindow extends ChatClientThread {
 		//쓰레드 실행
 		start();
 		updateTextArea("*****"+name+" 채팅방이 시작되었습니다 *****");
+
 	}
 	
 	private void finish() {
-		
 		pw.println("quit");
 
 		System.exit(0);
@@ -132,4 +139,15 @@ public class ChatWindow extends ChatClientThread {
 	protected void print(String str) {
 		updateTextArea(str);
 	}
+	
+	@Override
+	protected void printUser(String str, String gubun) {
+		
+		if(gubun.equals("UserListgui")) {
+			textAreaUser.setText("");
+			textAreaUser.append(str);
+		}
+	}
+	
+
 }

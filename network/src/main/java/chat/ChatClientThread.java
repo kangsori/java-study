@@ -19,15 +19,17 @@ public class ChatClientThread extends Thread {
 			while(true) {
 				// 받은 메세지 출력
 				String response = br.readLine();
-				
+		
 				String[] tokens = response.split(" ");
 				
 				if("stop".equals(tokens[0])) {
 					break;
 				}else if ("System".equals(tokens[0])){
 					print("["+ChatClient.decodeToString(tokens[1])+"]");
+				}else if ("UserList".equals(tokens[0]) || "UserListgui".equals(tokens[0])){
+					printUser(ChatClient.decodeToString(tokens[1]),tokens[0]);
 				}else {
-					print(">>"+tokens[0]+":"+ChatClient.decodeToString(tokens[1]));
+					print(">>"+ChatClient.decodeToString(tokens[0])+":"+ChatClient.decodeToString(tokens[1]));
 				}
 			}
 			
@@ -49,6 +51,7 @@ public class ChatClientThread extends Thread {
 	
 	}
 	
+	//종료시 카운트 다운 + 종료 메서드
 	public void countDown() {
 		Timer m = new Timer();
 		TimerTask t = new TimerTask() {
@@ -66,11 +69,16 @@ public class ChatClientThread extends Thread {
 		};
 		
 		m.schedule(t,0,1000);
-
 	}
 	
 	protected void print(String str) {
 		System.out.println(str);
+	}
+	
+	protected void printUser(String str, String gubun) {
+		if(gubun.equals("UserList")) {
+			System.out.println(str);
+		}
 	}
 	
 }

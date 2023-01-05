@@ -39,7 +39,7 @@ public class ChatClient {
 				String nickname = scanner.nextLine();
 				
 				if (!nickname.isEmpty()) {
-					pw.println("join "+nickname);
+					pw.println("join "+encodeToString(nickname));
 					break;
 				}
 				
@@ -63,6 +63,8 @@ public class ChatClient {
 				if("quit".equals(input)) {
 					pw.println(input);
 					break;
+				}else if("userlist".equals(input)) {
+					pw.println(input);
 				}else{
 					pw.println("message "+encodeToString(input));
 				}

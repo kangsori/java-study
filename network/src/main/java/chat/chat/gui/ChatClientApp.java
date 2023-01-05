@@ -47,23 +47,25 @@ public class ChatClientApp {
 		try {
 			//1. create socekt
 			socket = new Socket();
-
+		
 			//2. connect to server
 			socket.connect(new InetSocketAddress(SERVER_IP,ChatServer.PORT));
-
+			
 			//3. get iostream
 			PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(),"utf-8"),true);
 			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(),"utf-8"));
 
 			//4. join protocol 진행
-			pw.println("join "+nickname);
+			pw.println("join "+ChatClient.encodeToString(nickname));
 			
 			String response = br.readLine();
-
+			
 			String[] tokens = response.split(" ");
 				
 			if("System".equals(tokens[0])) {
+				
 				new ChatWindow(name,pw,br).show();
+				
 			}
 			
 			while(true) {

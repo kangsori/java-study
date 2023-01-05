@@ -1,7 +1,6 @@
 package chat;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -13,7 +12,7 @@ public class ChatServer {
 	
 	public static void main(String[] args) {
 		ServerSocket serverSocket = null;
-		List<Writer> listWriters = new ArrayList<Writer>();
+		List<User> listWriters = new ArrayList<User>();
 		
 		try {
 			// 서버 소켓 생성
@@ -25,7 +24,6 @@ public class ChatServer {
 			
 			// 요청대기
 			while(true) {
-				
 				Socket socket = serverSocket.accept();
 				
 				new ChatServerThread(socket, listWriters).start();
