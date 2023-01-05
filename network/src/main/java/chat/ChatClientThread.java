@@ -2,19 +2,17 @@ package chat;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.Socket;
 import java.net.SocketException;
-import java.nio.channels.ClosedByInterruptException;
-import java.util.Base64;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ChatClientThread extends Thread {
-	private BufferedReader br ;
-	
-
+	protected BufferedReader br ;
+	protected int count =3;
 	public ChatClientThread(BufferedReader br) {
 		this.br = br;
 	}
-
+	
 	@Override
 	public void run() {
 		try {
@@ -27,14 +25,15 @@ public class ChatClientThread extends Thread {
 				if("stop".equals(tokens[0])) {
 					break;
 				}else if ("System".equals(tokens[0])){
-					System.out.println(ChatClient.decodeToString(tokens[1]));
+					print("["+ChatClient.decodeToString(tokens[1])+"]");
 				}else {
-					System.out.println(">>"+tokens[0]+":"+ChatClient.decodeToString(tokens[1]));
+					print(">>"+tokens[0]+":"+ChatClient.decodeToString(tokens[1]));
 				}
 			}
 			
 		}catch(SocketException e) {
-			ChatClient.log("suddenly closed by server");
+			print("[suddenly closed by server - 3초후 연결이 끊깁니다]");
+			countDown();
 		}catch(IOException e) {
 			ChatClient.log("error - "+e);
 		}finally {
@@ -48,6 +47,30 @@ public class ChatClientThread extends Thread {
 			}
 		}
 	
-	}	
+	}
+	
+	public void countDown() {
+		Timer m = new Timer();
+		TimerTask t = new TimerTask() {
+			
+			public void run() {
+				if(count >= 1) {
+					print(String.valueOf(count));
+				}else {
+					m.cancel();
+					count =3;
+					System.exit(0);
+				}
+				count--;
+			}
+		};
+		
+		m.schedule(t,0,1000);
+
+	}
+	
+	protected void print(String str) {
+		System.out.println(str);
+	}
 	
 }

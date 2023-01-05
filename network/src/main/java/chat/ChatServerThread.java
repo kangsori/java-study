@@ -9,7 +9,6 @@ import java.io.Writer;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.Base64;
 import java.util.List;
 
 public class ChatServerThread extends Thread {
@@ -59,6 +58,8 @@ public class ChatServerThread extends Thread {
 			
 		}catch (SocketException e) {
 			ChatServer.log("suddenly closed by client");
+			broadcast("System "+ChatClient.encodeToString(nickname+"님의 연결이 끊겼습니다."));
+		
 		} catch (IOException e) {
 			ChatServer.log("error - "+e);
 		} finally {

@@ -7,7 +7,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Scanner;
@@ -35,9 +34,18 @@ public class ChatClient {
 			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(),"utf-8"));
 			
 			// join 프로토콜
-			System.out.print("닉네임>>");
-			String nickname = scanner.nextLine();
-			pw.println("join "+nickname);
+			while(true) {
+				System.out.print("닉네임>>");
+				String nickname = scanner.nextLine();
+				
+				if (!nickname.isEmpty()) {
+					pw.println("join "+nickname);
+					break;
+				}
+				
+				System.out.println("닉네임은 한글자 이상 입력해야 합니다.");
+				
+			}
 			
 			//ChatClient
 			new ChatClientThread(br).start();
@@ -48,7 +56,7 @@ public class ChatClient {
 				
 				//입력값이 없을때 처리
 				if(input=="") {
-					System.out.print("[내용을 입력해 주세요]");
+					System.out.print("--내용을 입력해 주세요--");
 					continue;
 				}
 				

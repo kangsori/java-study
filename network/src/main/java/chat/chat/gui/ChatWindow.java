@@ -1,4 +1,4 @@
-package chat.gui;
+package chat.chat.gui;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Color;
@@ -12,21 +12,31 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
 
-public class ChatWindow {
 
+import chat.ChatClient;
+import chat.ChatClientThread;
+
+public class ChatWindow extends ChatClientThread {
+	private String name;
 	private Frame frame;
 	private Panel pannel;
 	private Button buttonSend;
 	private TextField textField;
 	private TextArea textArea;
-
-	public ChatWindow(String name) {
+	private PrintWriter pw = null;
+	
+	public ChatWindow(String name,PrintWriter pw,BufferedReader br) {
+		super(br);
+		this.name=name;
 		frame = new Frame(name);
 		pannel = new Panel();
 		buttonSend = new Button("Send");
 		textField = new TextField();
 		textArea = new TextArea(30, 80);
+		this.pw=pw;
 	}
 
 	public void show() {
@@ -41,11 +51,14 @@ public class ChatWindow {
 			}
 		});
 		
-		//buttonSend.addActionListener((e)-> {
-		//});
+		buttonSend.addActionListener((e)-> {
+			sendMessage();
+		});
 
 		// Textfield
 		textField.setColumns(80);
+		
+		//엔터이벤트 실행
 		textField.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -75,42 +88,48 @@ public class ChatWindow {
 		frame.setVisible(true);
 		frame.pack();
 		
-		// IOStream 받아오기
-		// ChatClientThread 생성하고 실행
+		//쓰레드 실행
+		start();
+		updateTextArea("*****"+name+" 채팅방이 시작되었습니다 *****");
 	}
 	
 	private void finish() {
-		// quit protocol 구현
 		
-		// clean-up
-		
-		// exit java(Application) 
+		pw.println("quit");
+
 		System.exit(0);
 	}
 	
 	private void sendMessage() {
 		String message = textField.getText();
-		System.out.println("메세지 보내는 프로토콜 구현 !!:"+message);
+		
+		//입력값이 없을때 처리
+		if(message.isEmpty()) {
+			updateTextArea("--내용을 입력해 주세요--");
+			return;
+		}
+		
+		if("quit".equals(message)) {
+			pw.println(message);
+			finish();
+			return;
+		}else{
+			pw.println("message "+ChatClient.encodeToString(message));
+		}
 		
 		textField.setText("");
 		textField.requestFocus();
 		
-		// ChatClientThread 에서 서버로 부터 받은 메세지가 있다 치고 ~~~
-		updateTextArea("마이콜:"+message);
 	}
 	
 	private void updateTextArea(String message) {
 		textArea.append(message);
 		textArea.append("\n");
-	}
-	
-	private class ChatClientThread extends Thread{
-		@Override
-		public void run() {
-			// String message = br.readLine();
-			updateTextArea("안녕");
-		}
+		
 	}
 
-	
+	@Override
+	protected void print(String str) {
+		updateTextArea(str);
+	}
 }
