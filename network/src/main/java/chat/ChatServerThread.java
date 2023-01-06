@@ -88,6 +88,9 @@ public class ChatServerThread extends Thread {
 		//writer풀에 저장
 		addWriter(this.user);
 		
+		PrintWriter printWriter = (PrintWriter)user.writer;
+		printWriter.println("System "+ChatClient.encodeToString("Join:OK"));
+		
 		//메세지 출력
 		String encodeingstr=ChatClient.encodeToString(this.user.name+"님이 입장하셨습니다.");
 		broadcast("System "+encodeingstr);
