@@ -38,8 +38,8 @@ public class ChatWindow extends ChatClientThread {
 		pannel2 = new Panel();
 		buttonSend = new Button("Send");
 		textField = new TextField();
-		textArea = new TextArea(30, 80);
-		textAreaUser = new TextArea(30, 20);
+		textArea = new TextArea(30, 70);
+		textAreaUser = new TextArea(30, 30);
 		this.pw=pw;
 	}
 

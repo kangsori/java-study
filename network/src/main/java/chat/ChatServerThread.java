@@ -44,7 +44,7 @@ public class ChatServerThread extends Thread {
 				String[] tokens = request.split(" ");
 				
 				if("join".equals(tokens[0])) {
-					doJoin(new User(pw,ChatClient.decodeToString(tokens[1])));
+					doJoin(new User(pw,ChatClient.decodeToString(tokens[1]),listWriters.size()==0 ?"Y":"N"));
 				}else if("message".equals(tokens[0])) {
 					doMessage(tokens[1]);
 				}else if("userlist".equals(tokens[0])) {
@@ -61,7 +61,10 @@ public class ChatServerThread extends Thread {
 		}catch (SocketException e) {
 			ChatServer.log("suddenly closed by client");
 			broadcast("System "+ChatClient.encodeToString(user.name+"님의 연결이 끊겼습니다."));
-		
+			removeWriter(this.user);
+			if(getMaster().isEmpty()) {
+				setMaster(listWriters.get(0).name);
+			}
 		} catch (IOException e) {
 			ChatServer.log("error - "+e);
 		} finally {
@@ -118,6 +121,8 @@ public class ChatServerThread extends Thread {
 	
 	//소켓 종료 메서드
 	private void doQuit(Writer writer) {
+		boolean ckMaster = user.name==getMaster();
+
 		//종료 신호 보내기
 		PrintWriter printWriter = (PrintWriter)writer;
 		printWriter.println("stop ");
@@ -131,6 +136,11 @@ public class ChatServerThread extends Thread {
 		
 		//유저리스트 갱신
 		broadcast("UserListgui "+getUserList());
+		
+		if(ckMaster && !listWriters.isEmpty()) {
+			setMaster(listWriters.get(0).name);
+		}
+		
 	}
 	
 	//writer풀 삭제 수행 메서드
@@ -141,15 +151,22 @@ public class ChatServerThread extends Thread {
 		
 	}
 	
+	//유저리스트 보내는 메서드
 	private void sendUserList(Writer writer) {
 		PrintWriter printWriter = (PrintWriter)writer;
 		printWriter.println("UserList "+getUserList());
 	}
 	
+	//유저리스트 가져오는 메서드
 	private String getUserList() {
 		String list = "[채팅 유저 리스트]\n";
 		for(int i=0 ; i<listWriters.size() ; i++) {
 			list += listWriters.get(i).name;
+			
+			if(listWriters.get(i).master =="Y") {
+				list += " - MASTER";
+			}
+			
 			if (i !=(listWriters.size()-1)) {
 				list += "\n";
 			}
@@ -157,6 +174,30 @@ public class ChatServerThread extends Thread {
 		
 		return ChatClient.encodeToString(list);
 	
+	}
+	
+	private String getMaster() {
+		String master ="" ;
+		for(int i=0 ; i<listWriters.size() ; i++) {
+			if(listWriters.get(i).master == "Y") {	
+				master=listWriters.get(i).name;
+			}
+		}
+		return master;
+	}
+	
+	private void setMaster(String name) {
+		if(listWriters.isEmpty()) {
+			return;
+		}
+		for(int i=0 ; i<listWriters.size() ; i++) {
+			if(listWriters.get(i).name == name) {	
+				listWriters.get(i).setMaster("Y") ;
+				broadcast("System "+ChatClient.encodeToString(listWriters.get(i).name+"(으)로 방장이 변경되었습니다"));
+				//유저리스트 갱신
+				broadcast("UserListgui "+getUserList());
+			}
+		}
 	}
 	
 }
